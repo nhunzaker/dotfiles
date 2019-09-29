@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Set my color theme according to my wallpaper
+# -s : don't set terminal colors (they never look great)
+# -n : don't set wallpaper (nitrogen does this)
+wal --saturate 0.63 -i $(main_wallpaper) -q -n -s --backend haishoku -b "#111111"
+
+xrdb -merge ~/.cache/wal/colors.Xresources

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo $(cat ~/.config/nitrogen/bg-saved.cfg | sed -n 's/.*file=//p' | head -n 1)

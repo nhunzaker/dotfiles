@@ -1,0 +1,10 @@
+# Spotify icon \uF1BC
+[spotify]
+label=
+command=~/.config/i3blocks/scripts/spotify.py
+color=#2DF0A7
+interval=5
+
+[time]
+command=date +"%-I:%M%P    %B %d   "
+interval=30

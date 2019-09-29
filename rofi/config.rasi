@@ -1,0 +1,95 @@
+/*
+ * Rasi Configuration / Theme
+ * https://github.com/davatorium/rofi/wiki/themes
+ *
+ * To get a list of all properties:
+ *
+ *   rofi -dump-config
+ */
+
+configuration {
+  modi: "drun";
+  font: "IBM Plex Sans 12";
+  display-drun: "$";
+  drun-display-format: " {name}";
+  theme: "~/.cache/wal/colors-rofi-dark.rasi";
+}
+
+* {
+  background-color: #101010bb;
+  columns: 1;
+  border-color: #00000000;
+  text-color: #EFEFEF;
+  spacing: 0;
+}
+
+#window {
+  border: 1;
+  border-color: #070707cc;
+  border-radius: 4;
+  padding: 0;
+  width: 800;
+  height: 200;
+}
+
+#mainbox {
+  border: 1;
+  border-color: #77779910;
+  border-radius: 4;
+  children: [inputbar, listview];
+  padding: 7 0;
+  spacing: 0;
+}
+
+#inputbar {
+  children: [ prompt,textbox-prompt-colon,entry,case-indicator ];
+  background-color: #00000000;
+  border: 0 0 1;
+  padding: 10 20 15;
+  border-color: #00000088;
+}
+
+#listview {
+  background-color: #00000000;
+  fixed-height: 0;
+  border: 0;
+  spacing: 5;
+  scrollbar: false;
+  padding: 12 0 0;
+  border: 1 0 0;
+  border-color: #7262a817;
+}
+
+#element {
+  background-color: #00000000;
+  border: 0;
+  font: "IBM Plex Sans Italic 12";
+  padding: 2 16;
+  text-color: #ffffffdd;
+}
+
+#element selected {
+  text-color: @color6;
+}
+
+#case-indicator {
+  background-color: #00000000;
+  spacing: 0;
+}
+
+#entry {
+  background-color: #00000000;
+  spacing: 0;
+}
+
+#prompt {
+  background-color: #00000000;
+  color: @color13;
+}
+
+#textbox-prompt-colon {
+  background-color: #00000000;
+  expand:     false;
+  str:        " ";
+  margin:     0 0.3em 0em 0em ;
+}

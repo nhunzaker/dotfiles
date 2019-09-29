@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Emacs daemon
+#
+# I used to use a service for this, however starting the daemon here
+# avoids issues with not having a window system on init.
+
+if ! pgrep "emacs" > /dev/null; then
+  fish -c '/usr/bin/emacs --daemon --no-splash --no-site-lisp --no-site-file'
+fi
