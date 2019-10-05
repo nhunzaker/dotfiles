@@ -57,11 +57,8 @@
  frame-title-format "%b")
 
 ;; Background opacity
-;; I don't have this enabled right now because I need to improve
-;; contrast.
-;;
-;; (set-frame-parameter (selected-frame) 'alpha '(98 . 98))
-;; (add-to-list 'default-frame-alist '(alpha . (98 . 98)))
+(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
+(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
 
 (require 'mode-line)
 
