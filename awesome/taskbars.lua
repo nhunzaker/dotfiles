@@ -229,7 +229,14 @@ awful.screen.connect_for_each_screen(
             },
             {
                 -- https://www.lua.org/pil/22.1.html
-                wibox.widget.textclock(" %I:%M %p    %B %d    "),
+                -- Me
+                wibox.widget.textclock("%I:%M %p   •   "),
+                -- Latvia
+                --wibox.widget.textclock("Riga %I:%M %p   •   ", 60, "Europe/Riga"),
+                -- Denver
+                --wibox.widget.textclock("Denver %I:%M %p    •   ", 60, "America/Denver"),
+                -- Date
+                wibox.widget.textclock("%B %d    ", 60),
                 exit,
                 layout = wibox.layout.fixed.horizontal
             },

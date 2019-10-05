@@ -155,12 +155,11 @@ screen_height = awful.screen.focused().geometry.height
 
 awful.layout.layouts = {
     -- These loosely match Kitty's layouts
-    awful.layout.suit.tile.right,
+    awful.layout.suit.spiral,
+    awful.layout.suit.tile.left,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.spiral
+    awful.layout.suit.tile.bottom
     --    awful.layout.suit.tile.top,
-    --    awful.layout.suit.tile.left,
     --    awful.layout.suit.spiral.dwindle,
     --    awful.layout.suit.floating,
     --    awful.layout.suit.max.fullscreen,
@@ -337,7 +336,8 @@ awful.rules.rules = {
             class = {
                 "Nemo",
                 "Thunar",
-                "Nautilus"
+                "Nautilus",
+                "Pamac-manager"
             }
         },
         except_any = {

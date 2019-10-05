@@ -368,7 +368,9 @@ A place is considered `tab-width' character columns."
                 org-edit-src-content-indentation 0
                 org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "CANCELLED" "REASSIGNED" "HOLD")))
   :config
-  (use-package org-pomodoro)
+  (use-package org-pomodoro
+    :config
+    (setq org-pomodoro-overtime-sound-p -1))
   :hook 'nh/org-mode-hook)
 
 ;; - Shell Mode ------------------------------------------------------
@@ -505,7 +507,8 @@ A place is considered `tab-width' character columns."
 (use-package projectile
   :commands projectile-find-find projectile-switch-project
   :config
-  (setq projectile-indexing-method 'hybrid)
+  (setq projectile-indexing-method 'hybrid
+        projectile-git-submodule-command nil)
   (projectile-register-project-type 'yarn '("package.json")
                                     :compile "yarn build"
                                     :test "yarn test"
@@ -667,17 +670,21 @@ A place is considered `tab-width' character columns."
 ;; - Clojure ---------------------------------------------------------
 
 (use-package cider
-  :mode (("\\.edn?\\'" . cider-mode)
-         ("\\.clj?\\'" . cider-mode)
-         ("\\.cljs?\\'" . cider-mode))
   :config
-  (setq cider-repl-display-help-banner nil))
+  (setq cider-repl-display-help-banner nil
+        ))
 
 (defun my/cider-hook ()
   "My cider-mode hooks."
   (eldoc-mode))
 
 (add-hook 'cider-mode-hook 'my/cider-hook)
+
+(defun nh/hide-modeline ()
+  "Disable the modeline when opening the terminal."
+  (setq mode-line-format nil))
+
+(add-hook 'cider-repl-mode-hook 'nh/hide-modeline)
 
 ;; -------------------------------------------------------------------
 ;; [END]
