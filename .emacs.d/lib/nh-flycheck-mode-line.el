@@ -4,7 +4,6 @@
 
 (defun nh/flycheck-lighter (state)
   "Return flycheck information for the given error type STATE.
-
 Source: https://git.io/vQKzv"
   (let* ((counts (flycheck-count-errors flycheck-current-errors))
          (errorp (flycheck-has-current-errors-p state))

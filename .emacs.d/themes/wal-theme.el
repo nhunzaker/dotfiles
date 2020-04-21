@@ -37,7 +37,7 @@
 
       (foreground (ewal-load-color 'foreground))
       (background (ewal-load-color 'background))
-      (cursor (ewal-load-color 'background +1.5)))
+      (cursor (ewal-load-color 'background +6)))
 
   (let ((background-color background)
         (foreground-color foreground)
@@ -225,12 +225,12 @@
      `(markdown-header-face-5 ((t (:foreground ,base09))))
      `(markdown-header-face-6 ((t (:foreground ,base09))))
      `(markdown-bold-face  ((t (:foreground ,base09 :bold t))))
-     `(markdown-blockquote-face  ((t (:foreground,comment-color :italic t))))
+     `(markdown-blockquote-face  ((t (:foreground ,comment-color :italic t))))
      `(markdown-pre-face  ((t (:foreground ,base10))))
      `(markdown-code-face ((t (:height: 100))))
 
-     `(show-paren-match ((t (:background unspecified :foreground ,highlight-color :underline nil :weight normal))))
-     `(show-paren-mismatch ((t (:background unspecified :foreground ,base03 :underline nil :weight bold))))
+     `(show-paren-match ((t (:background ,(color-darken-name highlight-color 55) :foreground ,highlight-color :underline nil :weight normal))))
+     `(show-paren-mismatch ((t (:background ,error-color :foreground ,base03 :underline nil :weight bold))))
 
      ;; Web Mode
      `(web-mode-block-face ((t (:foreground ,text-color, :background unspecified ))))

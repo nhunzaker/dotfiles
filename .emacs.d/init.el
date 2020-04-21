@@ -36,7 +36,7 @@
 ;; Fixes fonts in emacs client
 ;; https://stackoverflow.com/questions/3984730/emacs-gui-with-emacs-daemon-not-loading-fonts-correctly
 (setq default-frame-alist
-      '((font . "Dank Mono 13")
+      '((font . "Dank Mono 14")
         (vertical-scroll-bars . nil)))
 
 (setq-default indent-tabs-mode nil
@@ -57,8 +57,9 @@
  frame-title-format "%b")
 
 ;; Background opacity
-(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
-(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
+;; Not really using this, but here it is:
+(set-frame-parameter (selected-frame) 'alpha '(97 . 97))
+(add-to-list 'default-frame-alist '(alpha . (97 . 97)))
 
 (require 'mode-line)
 
@@ -93,18 +94,24 @@
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
+(use-package unicode-fonts
+  :config
+  (setq unicode-fonts-block-font-mapping '(("Noto Sans Emoji"))
+        unicode-fonts-fontset-names '("fontset-default"))
+  (unicode-fonts-setup))
+
 (use-package ewal
   :config
   (load-theme 'wal t))
 
 (setq load-theme-once t)
-(defun nh/apply-theme ()
+(defun my/apply-theme ()
   "Always apply my theme on a new frame.  This is a total hack, but I can't figure out another way to do this."
   (load-theme 'wal t)
   (when load-theme-once)
-  (remove-hook 'focus-in-hook 'nh/apply-theme))
+  (remove-hook 'focus-in-hook 'my/apply-theme))
 
-(add-hook 'focus-in-hook 'nh/apply-theme)
+(add-hook 'focus-in-hook 'my/apply-theme)
 
 (use-package neotree
   :commands neotree-toggle
@@ -174,11 +181,21 @@
 
 (defun workbook-filename (date)
   "Location of the workbook logfile for a given DATE."
-  (format-time-string "~/.org/worklog/%y.%m.%d.org" date))
+  (format-time-string "~/.org/worklog/%Y.%W.org" date))
 
-(defun workbook-title (date)
+(defun day-of-week (&optional date)
+  "Get the day of the week for a given DATE."
+  (format-time-string "%A" (or date (current-time))))
+
+(defun last-monday ()
+  "Determine the most recent Monday."
+  (string-to-number (if (string-equal "Monday" (day-of-week))
+                        (shell-command-to-string "date -d today +'%s'")
+                      (shell-command-to-string "date -d last-monday +'%s'"))))
+
+(defun workbook-title ()
   "The title string of Nate's workbooks.  Based on a given DATE."
-  (format-time-string "%B %d, %Y" date))
+  (format-time-string "Week of %B %-d, %Y" (last-monday)))
 
 (defun workbook (&optional date)
   "Opens up workbook at a given DATE.  Defaults to current day."
@@ -187,17 +204,26 @@
     (find-file (workbook-filename moment))
     (when (not (file-exists-p (workbook-filename moment)))
       (insert-before-markers
-       (concat "#+TITLE: " (workbook-title moment) "\n#+STARTUP: content\n\n* Tasks [0/0]\n* Journal\n"))
+       (concat "#+TITLE: " (workbook-title) "\n#+STARTUP: content\n\n* Tasks [0/0]\n* Journal\n"))
       (save-buffer))))
 
 (defun yesterday ()
   "Yesterday's date in Unix time."
   (string-to-number (shell-command-to-string "date -d yesterday +'%s'")))
 
+(defun last-week ()
+  "Last week's date in Unix time."
+  (string-to-number (shell-command-to-string "date -d last-week +'%s'")))
+
 (defun workbook-yesterday ()
   "Opens up Nate's work log for yesterday."
   (interactive)
   (workbook (yesterday)))
+
+(defun workbook-last-week ()
+  "Opens up Nate's work log for yesterday."
+  (interactive)
+  (workbook (last-week)))
 
 (setq initial-buffer-choice (workbook-filename (current-time)))
 (add-hook 'after-init-hook #'workbook)
@@ -223,6 +249,12 @@ A place is considered `tab-width' character columns."
   (let ((face (or (get-char-propetry (point) 'read-face-name)
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" position))))
+
+;; Scroll fixes
+
+(setq mouse-wheel-scroll-amount '(0.1))
+(setq mouse-wheel-progressive-speed nil)
+(setq ring-bell-function 'ignore)
 
 ;;; [4] Editor Customization
 
@@ -363,12 +395,13 @@ A place is considered `tab-width' character columns."
                 org-src-tab-acts-natively t
                 org-confirm-babel-evaluate nil
                 org-edit-src-content-indentation 0
-                org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "CANCELLED" "REASSIGNED" "HOLD")))
+                org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "CANCELLED" "REASSIGNED" "HOLD")
+                                    (sequence "BUG" "FIXING" "|" "FIXED" "NOFIX")))
   :config
   (use-package org-pomodoro
     :config
     (setq org-pomodoro-overtime-sound-p -1))
-  :hook 'nh/org-mode-hook)
+  :hook 'my/org-mode-hook)
 
 ;; - Shell Mode ------------------------------------------------------
 
@@ -666,22 +699,42 @@ A place is considered `tab-width' character columns."
 
 ;; - Clojure ---------------------------------------------------------
 
+(use-package paredit)
+
+(use-package rainbow-delimiters)
+
+(use-package clojure-mode
+  :config
+  (setq clojure-indent-style 'align-arguments
+        cider-default-cljs-repl 'figwheel)
+  (cider-add-to-alist 'cider-jack-in-cljs-dependencies
+                      "figwheel-sidecar" "0.5.19"))
+
 (use-package cider
   :config
-  (setq cider-repl-display-help-banner nil
-        ))
+  (setq cider-repl-display-help-banner nil))
 
 (defun my/cider-hook ()
-  "My cider-mode hooks."
-  (eldoc-mode))
+  "Behavior for editing clojure files."
+  ;; See https://docs.cider.mx/cider/additional_packages.html#_generic_emacs_extensions.
+  (paredit-mode)
+  (subword-mode)
+  (rainbow-delimiters-mode)
+  (smartparens-strict-mode)
+  ;; Show documentation in modeline
+  (eldoc-mode)
+  ;; Expand/Contract
+  (hs-minor-mode 1)
+  (local-set-key [(control c) (control f)] 'hs-toggle-hiding)
+  (local-set-key [(control c) (control s)] 'hs-toggle-hiding))
 
 (add-hook 'cider-mode-hook 'my/cider-hook)
 
-(defun nh/hide-modeline ()
-  "Disable the modeline when opening the terminal."
+(defun my/cider-repl-hook ()
+  "Behavior for CIDER REPL."
   (setq mode-line-format nil))
 
-(add-hook 'cider-repl-mode-hook 'nh/hide-modeline)
+(add-hook 'cider-repl-mode-hook 'my/cider-repl-hook)
 
 ;; -------------------------------------------------------------------
 ;; [END]
@@ -699,9 +752,3 @@ A place is considered `tab-width' character columns."
 
 ;;; init.el ends here
 (put 'downcase-region 'disabled nil)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
